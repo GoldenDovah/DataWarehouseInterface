@@ -38,7 +38,7 @@ public class SQLServerExtractor extends DataExtractorAbstrait implements Afficha
 
     public void extractData() throws SQLException, ClassNotFoundException, InterruptedException {
         connectToDB();
-        String selectSql = "SELECT count(*) FROM dbo.DimEmployee";
+        String selectSql = "SELECT count(*) FROM dbo."+this.tableName;
         Statement statement = this.connection.createStatement();
         ResultSet resultSet = statement.executeQuery(selectSql);
         resultSet.next();

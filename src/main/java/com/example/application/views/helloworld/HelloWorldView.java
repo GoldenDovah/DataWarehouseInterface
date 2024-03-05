@@ -32,8 +32,16 @@ public class HelloWorldView extends HorizontalLayout {
     private TextField name;
     private Button sayHello;
     private Label label;
+    private boolean sqlConnected = false;
+    private boolean csvConnected = false;
+    private boolean excelConnected = false;
 
     SQLServerExtractor sqlServerExtractor;
+
+    void enableExtraction(Button extractButton){
+        if (sqlConnected && csvConnected && excelConnected)
+            extractButton.setEnabled(true);
+    }
 
     public HelloWorldView() {
         VerticalLayout layout = new VerticalLayout();
@@ -71,21 +79,15 @@ public class HelloWorldView extends HorizontalLayout {
         TextField table_name = new TextField("Table Name");
         Button ConnectSQLButton = new Button("Connect");
         ConnectSQLButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        Notification notificationSuccess = new Notification();
-        notificationSuccess.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
         Div textSuccess = new Div(new Text("Successfully connected to the database!"));
         Notification notification = new Notification();
         notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
         Div text = new Div(new Text("Failed to connect to the database"));
         Button closeButton = new Button(new Icon("lumo", "cross"));
-        HorizontalLayout layoutNotificationSuccess = new HorizontalLayout(textSuccess, closeButton);
-        layoutNotificationSuccess.setAlignItems(Alignment.CENTER);
-        notificationSuccess.add(layoutNotificationSuccess);
         closeButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
         closeButton.setAriaLabel("Close");
         closeButton.addClickListener(event -> {
             notification.close();
-            notificationSuccess.close();
         });
         HorizontalLayout layoutNotification = new HorizontalLayout(text, closeButton);
         layoutNotification.setAlignItems(Alignment.CENTER);
@@ -98,8 +100,15 @@ public class HelloWorldView extends HorizontalLayout {
                     database_password.getValue()
             );
             try {
+                if (table_name.isEmpty()){
+                    throw new SQLException();
+                }
                 sqlServerExtractor.connectToDB();
-                notificationSuccess.open();
+                sqlConnected = true;
+                enableExtraction(extractButton);
+                Notification notificationSuccess = Notification
+                        .show("Successfully connected to the database");
+                notificationSuccess.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
             } catch (SQLException | ClassNotFoundException e) {
                 System.out.println(e);
                 notification.open();
@@ -121,6 +130,8 @@ public class HelloWorldView extends HorizontalLayout {
             String fileName = event.getFileName();
             long contentLength = event.getContentLength();
             String mimeType = event.getMIMEType();
+            excelConnected = true;
+            enableExtraction(extractButton);
         });
         layoutExcel.add(imageExcel, label_excel, uploadExcel);
         Image imageCSV = new Image("images/csv.png", "CSV Image");
@@ -137,6 +148,9 @@ public class HelloWorldView extends HorizontalLayout {
             String fileName = event.getFileName();
             long contentLength = event.getContentLength();
             String mimeType = event.getMIMEType();
+            csvConnected = true;
+            System.out.println(fileName);
+            enableExtraction(extractButton);
         });
         layoutCSV.add(imageCSV, label_csv, uploadCSV);
     }

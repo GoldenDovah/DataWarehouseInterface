@@ -7,7 +7,7 @@ import java.sql.*;
 import java.util.List;
 
 public class DataWarehouse{
-    private final List<Person> personData;
+    private static List<Person> personData;
     private List<List<String>> salesOrderData;
     private final int totalRecordCount;
     private final int threadCount;
@@ -19,6 +19,10 @@ public class DataWarehouse{
         this.totalRecordCount = totalRecordCount;
         this.personData = personData;
         this.threadCount = (int) Math.ceil((double) this.totalRecordCount/this.threadTrigger);
+    }
+
+    public static List<Person> getPersonData() {
+        return personData;
     }
 
     private Connection connectToDB() throws ClassNotFoundException, SQLException {
@@ -37,7 +41,7 @@ public class DataWarehouse{
     public void loadPersonData() throws SQLException, ClassNotFoundException {
         connection = connectToDB();
         for (int i = 0; i < this.totalRecordCount; i += this.threadTrigger) {
-            DwThread dwThread = new DwThread(i, i+this.threadTrigger, this.personData, connection);
+            DwThread dwThread = new DwThread(i, i+this.threadTrigger, personData, connection);
             dwThread.start();
         }
     }

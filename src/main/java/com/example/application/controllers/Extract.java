@@ -11,7 +11,39 @@ import java.util.Collection;
 import java.util.stream.Stream;
 
 public class Extract {
-    public Extract(String tableName, String databaseName, String user, String password, String CSVName, String ExcelName) throws SQLException, ClassNotFoundException, InterruptedException {
+
+    private static String tableName;
+    private static String databaseName;
+    private static String user;
+    private static String password;
+    private static String CSVName;
+    private static String ExcelName;
+
+    public static void setCSVName(String CSVName) {
+        Extract.CSVName = CSVName;
+    }
+
+    public static void setDatabaseName(String databaseName) {
+        Extract.databaseName = databaseName;
+    }
+
+    public static void setExcelName(String excelName) {
+        ExcelName = excelName;
+    }
+
+    public static void setPassword(String password) {
+        Extract.password = password;
+    }
+
+    public static void setTableName(String tableName) {
+        Extract.tableName = tableName;
+    }
+
+    public static void setUser(String user) {
+        Extract.user = user;
+    }
+
+    public Extract() throws SQLException, ClassNotFoundException, InterruptedException {
         SQLServerExtractor sqlServerExtractor = new SQLServerExtractor(tableName, databaseName, user, password);
         sqlServerExtractor.extractData();
         //sqlServerExtractor.afficherResume();
@@ -32,7 +64,6 @@ public class Extract {
                 adventureWorks.size()+sampleCSV.size()+sampleXLS.size(),
                 personData
         );
-
-        dataWarehouse.loadPersonData();
+        System.out.println(dataWarehouse.getPersonData());
     }
 }

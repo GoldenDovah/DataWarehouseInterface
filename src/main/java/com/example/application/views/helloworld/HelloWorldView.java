@@ -1,7 +1,10 @@
 package com.example.application.views.helloworld;
 
+import com.example.application.controllers.Extract;
 import com.example.application.controllers.SQLServerExtractor;
+import com.example.application.views.transformation.TransformView;
 import com.vaadin.flow.component.Text;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -24,7 +27,7 @@ import com.vaadin.flow.component.html.Label;
 import java.io.InputStream;
 import java.sql.SQLException;
 
-@PageTitle("Hello World")
+@PageTitle("DataWarehouse SDSI")
 @Route(value = "hello")
 @RouteAlias(value = "")
 public class HelloWorldView extends HorizontalLayout {
@@ -35,6 +38,9 @@ public class HelloWorldView extends HorizontalLayout {
     private boolean sqlConnected = false;
     private boolean csvConnected = false;
     private boolean excelConnected = false;
+    private Extract extractor;
+    private String CSVName;
+    private String ExcelName;
 
     SQLServerExtractor sqlServerExtractor;
 
@@ -123,7 +129,7 @@ public class HelloWorldView extends HorizontalLayout {
         label_excel.getStyle().set("font-size", "22px").set("font-weight", "bold");
         MemoryBuffer bufferExcel = new MemoryBuffer();
         Upload uploadExcel = new Upload(bufferExcel);
-        uploadExcel.setDropLabel(new Label("Upload xlsx file here"));
+        uploadExcel.setDropLabel(new Label("Upload xls file here"));
         uploadExcel.setDropAllowed(true);
         uploadExcel.addSucceededListener(event -> {
             InputStream fileData = bufferExcel.getInputStream();
@@ -131,8 +137,13 @@ public class HelloWorldView extends HorizontalLayout {
             long contentLength = event.getContentLength();
             String mimeType = event.getMIMEType();
             excelConnected = true;
+            ExcelName = fileName;
+            System.out.println();
             enableExtraction(extractButton);
         });
+        String currentDirectory = System.getProperty("user.dir");
+        System.out.println("Current working directory: " + currentDirectory);
+
         layoutExcel.add(imageExcel, label_excel, uploadExcel);
         Image imageCSV = new Image("images/csv.png", "CSV Image");
         imageCSV.setWidth(150, Unit.PIXELS);
@@ -149,10 +160,28 @@ public class HelloWorldView extends HorizontalLayout {
             long contentLength = event.getContentLength();
             String mimeType = event.getMIMEType();
             csvConnected = true;
-            System.out.println(fileName);
+            CSVName = fileName;
             enableExtraction(extractButton);
         });
         layoutCSV.add(imageCSV, label_csv, uploadCSV);
+        extractButton.addClickListener(clickEvent -> {
+            try {
+                Extract.setTableName(table_name.getValue());
+                Extract.setDatabaseName(database_name.getValue());
+                Extract.setUser(database_user.getValue());
+                Extract.setPassword(database_password.getValue());
+                Extract.setCSVName(CSVName);
+                Extract.setExcelName(ExcelName);
+                extractor = new Extract();
+                UI.getCurrent().navigate(TransformView.class);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
 }

@@ -3,6 +3,8 @@ package com.example.application.views.transformation;
 import com.example.application.controllers.DataWarehouse;
 import com.example.application.controllers.Extract;
 import com.example.application.model.Person;
+import com.example.application.views.upload.UploadView;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.Grid;
@@ -55,7 +57,7 @@ public class TransformView extends VerticalLayout {
                 uploadButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
                 add(uploadButton);
                 uploadButton.addClickListener(clickEvent2 -> {
-
+                    UI.getCurrent().navigate(UploadView.class);
                 });
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);

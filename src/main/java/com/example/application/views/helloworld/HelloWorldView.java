@@ -85,7 +85,6 @@ public class HelloWorldView extends HorizontalLayout {
         TextField table_name = new TextField("Table Name");
         Button ConnectSQLButton = new Button("Connect");
         ConnectSQLButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        Div textSuccess = new Div(new Text("Successfully connected to the database!"));
         Notification notification = new Notification();
         notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
         Div text = new Div(new Text("Failed to connect to the database"));

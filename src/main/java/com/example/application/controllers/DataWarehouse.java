@@ -63,23 +63,4 @@ public class DataWarehouse{
         salesAmountThread.join();
     }
 
-    public void insertPeople(){
-        for (Person person: personData){
-            try {
-                String insertSql = "UPDATE dbo.PersonData SET totalSalesAmount = "+person.getTotalSalesAmount()+" WHERE personId = "+person.getKey();
-                ResultSet resultSet = null;
-                try (
-                        PreparedStatement prepsInsertProduct = connection.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS);) {
-                    prepsInsertProduct.execute();
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-            } catch (Exception e){
-                System.out.println("Reached max index ");
-                break;
-            }
-        }
-
-    }
-
 }

@@ -1,6 +1,7 @@
 package com.example.application.views.transformation;
 
 import com.example.application.controllers.DataWarehouse;
+import com.example.application.controllers.Extract;
 import com.example.application.model.Person;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -39,14 +40,26 @@ public class TransformView extends VerticalLayout {
         grid.setItems(people);
         add(grid);
 
-        HorizontalLayout layoutButtons = new HorizontalLayout();
-        add(layoutButtons);
-        Button uploadButton = new Button("Upload to Azure");
-        uploadButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY,
-                ButtonVariant.LUMO_CONTRAST);
         Button transformButton = new Button("Transform Data");
         transformButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY,
                 ButtonVariant.LUMO_CONTRAST);
-        layoutButtons.add(uploadButton, transformButton);
+        add(transformButton);
+        transformButton.addClickListener(clickEvent -> {
+            try {
+                Extract.transform();
+                grid.addColumn(Person::getTotalSalesAmount).setHeader("Total Sales Amount");
+                List<Person> p = DataWarehouse.getPersonData();
+                grid.setItems(p);
+                remove(transformButton);
+                Button uploadButton = new Button("Upload to Azure");
+                uploadButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+                add(uploadButton);
+                uploadButton.addClickListener(clickEvent2 -> {
+
+                });
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 }

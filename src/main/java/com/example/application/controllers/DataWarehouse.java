@@ -61,6 +61,9 @@ public class DataWarehouse{
         salesAmountThread.start();
         upperCaseThread.join();
         salesAmountThread.join();
+    }
+
+    public void insertPeople(){
         for (Person person: personData){
             try {
                 String insertSql = "UPDATE dbo.PersonData SET totalSalesAmount = "+person.getTotalSalesAmount()+" WHERE personId = "+person.getKey();

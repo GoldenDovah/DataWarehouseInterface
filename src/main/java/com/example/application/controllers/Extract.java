@@ -1,10 +1,8 @@
 package com.example.application.controllers;
 
-import com.example.application.controllers.SQLServerExtractor;
 import com.example.application.model.Person;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Collection;
@@ -18,6 +16,8 @@ public class Extract {
     private static String password;
     private static String CSVName;
     private static String ExcelName;
+
+    private static DataWarehouse dataWarehouse;
 
     public static void setCSVName(String CSVName) {
         Extract.CSVName = CSVName;
@@ -59,11 +59,14 @@ public class Extract {
         List<Person> personData = Stream.of(adventureWorks, sampleCSV, sampleXLS)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
-        DataWarehouse dataWarehouse = new DataWarehouse(
+        dataWarehouse = new DataWarehouse(
                 1000,
                 adventureWorks.size()+sampleCSV.size()+sampleXLS.size(),
                 personData
         );
-        System.out.println(dataWarehouse.getPersonData());
+    }
+
+    public static void transform() throws InterruptedException {
+        dataWarehouse.transformData();
     }
 }
